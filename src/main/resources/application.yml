@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  mvc:
+    static-path-pattern: /**
+
+custom-config:
+  mock-apps:
+    - application-id: "test"
+      mock-menus:
+        - name: "token换取"
+          url: "/restcloud/api/v1/token/create"
+          mock-response:
+            delay: 5
+            suc-code: 200
+            suc-body: "{\"appTokenId\":\"{\\\"appToken\\\":\\\"VLqUFTxeAxP2wSYIaemUuAkJyTRGHFKC0oThTfzSNzYLDObXbYUJtANI+UGa6fhHTgw4Au5pxUdxi0KUn5DhoS+ptv+frh7M2M36aBkQfYhvjr37nL4f5bSQ+cdfnAmra2UN0npd01AkAuBDHkIwKTAsKeJR76RLcdlTsLda+fkfYti+f69KRIu17qxlFlKIZ5V50uhGwFPJw0xqfvfR3ZIOkohPePK1p5kwWYoEHmIgRa7w21PMVov9CIDInMBylEQ0gQTul+HEcwjsjyY+wkcuOQQ5cqJBwjQuUK3GUltMJyahANs0Vaz9Q/TdMHHn7aJun+1nSPqQghIveMs78VHwFF7Qmkpr\\\",\\\"expireAt\\\":1666983581703}\",\"userTokenId\":\"{\\\"userToken\\\":\\\"VLqUFTxeAxP2wSYIaemUuAkJyTRGHFKCxa/xH8P1K03CtWnF6Ylhw77M2N9cwWzprbSVN9L3BzgV3zDL8bbc8Ro6tA8h73Rtcl+wDXuY7Cbl8hcfoMLDIiTAji3oONHxfZAXJg3Fgmxu2Q/OgdVCgvDSrX5Gyd2q+xo26ujygJMyH1R6kUeRqjSDOy09LE/6urjNorU4vjNSl7MxwoFCAvsqeSCbYHr+szbfnQERvwwb/tOGW+pU8A==\\\",\\\"expireAt\\\":1666983581701}\",\"message\":\"userToken：令牌创建成功！；appToken：令牌创建成功!\"}"
+            err-code: 500
+            err-body: "{\"name\":123}"
+          headers:
+            - name: "Content-Type"
+              value: "application/json"
