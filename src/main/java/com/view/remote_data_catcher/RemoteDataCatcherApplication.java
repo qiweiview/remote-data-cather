@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
-
+@EnableWebSocket
 @ServletComponentScan("com.view.remote_data_catcher.core")
 @SpringBootApplication
 public class RemoteDataCatcherApplication {
