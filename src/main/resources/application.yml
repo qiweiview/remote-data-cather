@@ -8,6 +8,7 @@ spring:
 custom-config:
   mock-apps:
     - application-id: "test"
+      global-response-type: "SUC_RESPONSE"
       mock-menus:
         - name: "token换取"
           url: "/restcloud/api/v1/token/create"

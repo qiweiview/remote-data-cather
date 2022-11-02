@@ -15,6 +15,8 @@ import java.util.Map;
 public class MockApp {
     private String applicationId;
 
+    private String globalResponseType;
+
     private List<MockMenu> mockMenus;
 
     private Map<String, MockMenu> urlMap;
@@ -37,7 +39,7 @@ public class MockApp {
         if (mockMenu == null) {
             throw new RuntimeException(applicationId + " 应用下未匹配路径 " + realLocation);
         }
-        mockMenu.sendResponse(req, resp);
+        mockMenu.sendResponse(globalResponseType, req, resp);
     }
 
 

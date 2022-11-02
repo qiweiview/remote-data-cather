@@ -7,9 +7,73 @@
 </head>
 <body>
 <div id="app">
-    <el-button @click="visible = true">Button</el-button>
-    <el-dialog :visible.sync="visible" title="Hello world">
-        <p>Try Element</p>
+    <el-tabs tab-position="left">
+        <el-tab-pane label="报文监听">
+            <el-form :model="focusForm" label-width="80px">
+                <el-form-item label="当前绑定">
+                    {{currentBind}}
+                </el-form-item>
+                <el-form-item label="监听地址">
+                    <el-input v-model="focusPath" style="width: 60vw"></el-input>
+                    <el-button @click="doFocusBind">确认</el-button>
+                </el-form-item>
+                <el-form-item label="监听数据">
+                    <el-table :data="focusForm.dataHistory" style="width: 100%">
+                        <el-table-column label="日期">
+                            <template slot-scope="scope">
+                                <i class="el-icon-time"></i>
+                                <span>{{ scope.row.requestDateTime }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="地址">
+                            <template slot-scope="scope">
+                                <span>{{ scope.row.requestUri }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button size="mini" @click="showDetail(scope.row)">详 情</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-form-item>
+            </el-form>
+        </el-tab-pane>
+    </el-tabs>
+    <el-dialog
+            title="详细报文"
+            :visible.sync="dialogVisible"
+            width="60%">
+        <el-form :model="currentDetail" label-width="80px">
+            <el-form-item label="请求时间">
+                {{currentDetail.requestDateTime}}
+            </el-form-item>
+            <el-form-item label="地址">
+                {{currentDetail.remoteAddress}}
+            </el-form-item>
+            <el-form-item label="请求头">
+                <el-table :data="currentDetail.headerList" style="width: 100%">
+                    <el-table-column label="日期">
+                        <template slot-scope="scope">
+                            <i class="el-icon-time"></i>
+                            <span>{{ scope.row.key }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="日期">
+                        <template slot-scope="scope">
+                            <i class="el-icon-time"></i>
+                            <span>{{ scope.row.value }}</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                {{currentBind}}
+            </el-form-item>
+            <el-form-item label="请求体">
+                {{currentBind}}
+            </el-form-item>
+        </el-form>
+        <el-button @click="dialogVisible = false">关闭</el-button>
+        </span>
     </el-dialog>
 </div>
 </body>
@@ -20,8 +84,74 @@
 <script>
     new Vue({
         el: '#app',
-        data: function () {
-            return {visible: false}
+        data() {
+            return {
+                dialogVisible: false,
+                focusForm: {
+                    dataHistory: []
+                },
+                currentBind: '未绑定',
+                focusPath: '*',
+                socket: null,
+                currentDetail: {
+                    headerList: []
+                },
+            }
+        },
+        mounted: function () {
+            this.openSocket();
+        },
+        methods: {
+            showDetail(row) {
+                this.currentDetail = row
+                this.dialogVisible = true
+            },
+            doFocusBind() {
+                this.currentBind = this.focusPath
+                this.socket.send(this.focusPath)
+                this.$message({
+                    showClose: true,
+                    message: '绑定完成',
+                    type: 'success'
+                });
+            },
+            openSocket() {
+                let that = this
+                if (typeof (WebSocket) == "undefined") {
+                    console.log("您的浏览器不支持WebSocket");
+                } else {
+                    console.log("您的浏览器支持WebSocket");
+                    //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+                    //等同于socket = new WebSocket("ws://localhost:8888/xxxx/im/25");
+                    //var socketUrl="${request.contextPath}/im/"+$("#userId").val();
+                    let socketUrl = 'ws://' + window.location.host + '/websocket';
+                    if (this.socket != null) {
+                        this.socket.close();
+                        this.socket = null;
+                    }
+                    this.socket = new WebSocket(socketUrl);
+                    //打开事件
+                    this.socket.onopen = function () {
+                        console.log("websocket已打开");
+                        //socket.send("这是来自客户端的消息" + location.href + new Date());
+                    };
+
+                    //获得消息事件
+                    this.socket.onmessage = function (msg) {
+                        let jsonObj = JSON.parse(msg.data)
+                        that.focusForm.dataHistory.push(jsonObj)
+                        //发现消息进入    开始处理前端触发逻辑
+                    };
+                    //关闭事件
+                    this.socket.onclose = function () {
+                        console.log("websocket已关闭");
+                    };
+                    //发生了错误事件
+                    this.socket.onerror = function () {
+                        console.log("websocket发生了错误");
+                    }
+                }
+            }
         }
     })
 </script>

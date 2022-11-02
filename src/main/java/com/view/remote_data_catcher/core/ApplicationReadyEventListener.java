@@ -6,6 +6,7 @@ import com.view.remote_data_catcher.model.config_model.DataSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,8 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
     private final DataSender dataSender;
 
     private final CustomConfig customConfig;
+
+    private final ApplicationContext applicationContext;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -37,7 +40,7 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
 
 
         dataSender.loadFromYaml(customConfig);
-
+        SpringCtxUtils.applicationContext = applicationContext;
 
     }
 }

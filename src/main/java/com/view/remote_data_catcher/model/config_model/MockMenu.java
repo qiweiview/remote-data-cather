@@ -28,22 +28,32 @@ public class MockMenu {
     private List<MockHeader> headers;
 
 
-    public void sendResponse(HttpServletRequest req, HttpServletResponse resp) {
-
-
+    public void sendResponse(String globalResponseType, HttpServletRequest req, HttpServletResponse resp) {
         Map<String, String> map = query2Map(req);
 
 
         //默认成功
-        String respType = SystemConstant.DEFAULT_RESPONSE_TYPE;
+
+        String respType = globalResponseType;
+        if (respType == null) {
+            //todo 全局返回类型为空
+
+            //赋值默认类型
+            respType = SystemConstant.DEFAULT_RESPONSE_TYPE;
+        }
+
         String latestType = map.get(SystemConstant.RESPONSE_TYPE_QUERY_KEY);
         if (latestType != null) {
+            //todo query中类型不为空
+
+            //赋值类型
             respType = latestType;
         }
 
         Integer code;
         String response;
         if (SystemEnum.ResponseType.SUC_RESPONSE.code.equals(respType)) {
+            //todo 成功返回
             String sucBody = mockResponse.getSucBody();
             if (sucBody == null) {
                 sucBody = SystemConstant.DEFAULT_SUC_RESPONSE;
@@ -57,6 +67,7 @@ public class MockMenu {
             code = sucCode;
 
         } else if (SystemEnum.ResponseType.ERR_RESPONSE.code.equals(respType)) {
+            //todo 失败返回
             String errBody = mockResponse.getErrBody();
             if (errBody == null) {
                 errBody = SystemConstant.DEFAULT_ERR_RESPONSE;
@@ -69,6 +80,7 @@ public class MockMenu {
             }
             code = errCode;
         } else {
+            //todo 其他类型返回
             throw new RuntimeException("不支持的类型:" + respType);
         }
 

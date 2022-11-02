@@ -9,19 +9,40 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Slf4j
 @WebFilter(urlPatterns = "/*", filterName = "logFilter2")
 public class MockFilter implements Filter {
 
+    public static final Set<String> whiteList = new HashSet<>();
 
     private final DataSender dataSender;
+
+    private final SessionHolder sessionHolder;
+
+    static {
+        whiteList.add("/");
+        whiteList.add("/websocket");
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
+
+        String requestURI = req.getRequestURI();
+
+        sessionHolder.notice(requestURI, request);
+
+
+        if (whiteList.contains(requestURI)) {
+            //todo 白名单
+            chain.doFilter(request, response);
+            return;
+        }
 
         try {
             dataSender.sendResponse(req, resp);

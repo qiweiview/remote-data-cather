@@ -57,7 +57,7 @@ public class DataSender {
 
         MockApp mockApp = map.get(appId);
         if (mockApp == null) {
-            throw new RuntimeException("未匹配应用");
+            throw new RuntimeException("未匹配应用：" + requestURI);
         } else {
             String realLocation = Stream.of(split).filter(x -> {
                 //todo 滤掉空的
