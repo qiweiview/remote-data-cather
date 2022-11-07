@@ -30,7 +30,9 @@ public class RequestListener {
      */
     @OnClose
     public void onClose(Session session) {
-        //todo 不做任何操作
+        //todo 取消绑定
+        SessionHolder sessionHolder = SpringCtxUtils.getBean(SessionHolder.class);
+        sessionHolder.unRegister(session);
     }
 
     /**
@@ -51,6 +53,7 @@ public class RequestListener {
     @OnError
     public void onError(Session session, Throwable error) {
         //todo 不做任何操作
+
     }
 
 

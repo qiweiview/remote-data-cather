@@ -22,15 +22,28 @@ public class SessionHolder {
 
     private static final String FUZZY_PATH = "*";
 
-    private Map<String, List<Session>> sessionList = new ConcurrentHashMap<>();
+    private Map<String, List<SessionWrapper>> sessionList = new ConcurrentHashMap<>();
+
+    private Map<String, SessionWrapper> sessionWrapperMap = new ConcurrentHashMap<>();
 
     public void register(String key, Session session) {
-        List<Session> sessions = sessionList.get(key);
+        List<SessionWrapper> sessions = sessionList.get(key);
         if (sessions == null) {
             sessions = new LinkedList<>();
             sessionList.put(key, sessions);
         }
-        sessions.add(session);
+        sessions.add(SessionWrapper.of(session));
+        sessionWrapperMap.put(session.getId(), SessionWrapper.of(session));
+    }
+
+
+    public void unRegister(Session session) {
+        String id = session.getId();
+        SessionWrapper sessionWrapper = sessionWrapperMap.get(id);
+        if (sessionWrapper != null) {
+            sessionWrapper.close();
+            log.info("关闭会话：" + id);
+        }
     }
 
 
@@ -70,23 +83,30 @@ public class SessionHolder {
         }
 
         //通知匹配
-        List<Session> fuzzy = sessionList.get(FUZZY_PATH);
+        List<SessionWrapper> fuzzy = sessionList.get(FUZZY_PATH);
         autoSend(fuzzy, noticeModel);
 
-        List<Session> sessions = sessionList.get(uri);
+        List<SessionWrapper> sessions = sessionList.get(uri);
         autoSend(sessions, noticeModel);
     }
 
-    private void autoSend(List<Session> sessions, NoticeModel noticeModel) {
+    private void autoSend(List<SessionWrapper> sessions, NoticeModel noticeModel) {
         if (sessions != null) {
-            Iterator<Session> iterator = sessions.iterator();
+            Iterator<SessionWrapper> iterator = sessions.iterator();
             while (iterator.hasNext()) {
-                Session next = iterator.next();
-                if (!next.isOpen()) {
+                SessionWrapper sessionWrapper = iterator.next();
+
+                if (sessionWrapper.isClosed()) {
                     iterator.remove();
                 } else {
                     try {
-                        next.getBasicRemote().sendText(Jackson.toJson(noticeModel));
+                        Session session = sessionWrapper.getSession();
+                        if (session.isOpen()) {
+                            //todo 仍旧打开
+                            session.getBasicRemote().sendText(Jackson.toJson(noticeModel));
+                        } else {
+                            log.error("监测连接已关闭");
+                        }
                     } catch (IOException e) {
                         log.error("发送失败", e);
                     }
