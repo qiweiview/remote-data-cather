@@ -10,5 +10,12 @@ import java.util.List;
 @ConfigurationProperties(prefix = "custom-config")
 @Data
 public class CustomConfig {
+
+    //内存存储时长（天）
+    private Integer memoryStoreDays;
+
+
+    private Integer memoryFlushLimit;
+
     private List<MockApp> mockApps;
 }

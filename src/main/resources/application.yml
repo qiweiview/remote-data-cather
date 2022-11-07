@@ -6,6 +6,8 @@ spring:
     static-path-pattern: /**
 
 custom-config:
+  memory-store-days: 1 #(天) 大于天数后会刷新内存存储
+  memory-flush-limit: 1024 #(mb) 大于限制大小后会情况内存存储
   mock-apps:
     - application-id: "test"
       global-response-type: "SUC_RESPONSE"
