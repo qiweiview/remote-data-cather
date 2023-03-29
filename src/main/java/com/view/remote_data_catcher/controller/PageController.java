@@ -12,4 +12,10 @@ public class PageController {
     public String login() {
         return "/pages/index.html";
     }
+
+
+    @RequestMapping("/dataBook")
+    public String dataBook() {
+        return "/pages/data_book.html";
+    }
 }

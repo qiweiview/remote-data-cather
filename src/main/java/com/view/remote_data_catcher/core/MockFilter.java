@@ -25,7 +25,9 @@ public class MockFilter implements Filter {
 
     static {
         whiteList.add("/");
+        whiteList.add("/dataBook");
         whiteList.add("/websocket");
+        whiteList.add("/dataBook/list");
     }
 
     @Override

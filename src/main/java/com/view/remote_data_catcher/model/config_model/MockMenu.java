@@ -19,6 +19,8 @@ import java.util.Map;
 @Slf4j
 @Data
 public class MockMenu {
+    private String belongAppId;
+
     private String name;
 
     private String url;

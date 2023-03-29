@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+<div id="app">
+    <el-row :gutter="10">
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <el-table
+                    :data="dataBook"
+                    style="width: 100%">
+                <el-table-column label="名称">
+                    <template slot-scope="scope">
+                        <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="地址">
+                    <template slot-scope="scope">
+                        <span style="margin-left: 10px"><label
+                                style="color: firebrick">/{{ scope.row.belongAppId}}</label>{{ scope.row.url }}</span>
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button size="mini" @click="showMore( scope.row)">详情
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-col>
+    </el-row>
+    <el-dialog title="详情" :visible.sync="visible">
+        <el-form>
+            <el-form-item label="成功返回">
+                <label style="color: #67c23a">{{currentData.mockResponse.sucCode}}</label>
+                <el-input
+                        type="textarea"
+                        :rows="4"
+                        placeholder="成功返回"
+                        v-model="currentData.mockResponse.sucBody">
+                </el-input>
+            </el-form-item>
+            <el-form-item label="失败返回">
+                <label style="color: firebrick">:{{currentData.mockResponse.errCode}}</label>
+                <el-input
+                        type="textarea"
+                        :rows="4"
+                        placeholder="失败返回"
+                        v-model="currentData.mockResponse.errBody">
+                </el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="visible = false">关 闭</el-button>
+        </div>
+    </el-dialog>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="../js/vue.min.js"></script>
+<script src="../js/axios.min.js"></script>
+<!-- import JavaScript -->
+<script src="../js/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                dataBook: [],
+                visible: false,
+                currentData: {
+                    mockResponse: {}
+                }
+            }
+        },
+        mounted: function () {
+            this.loadDataBook()
+        },
+        methods: {
+            showMore(x) {
+                this.currentData = x
+                this.visible = true
+            },
+            loadDataBook() {
+                let that = this
+                axios.post('/dataBook/list', {})
+                    .then((response) => {
+                        that.dataBook = response.data
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }
+        }
+    })
+</script>
+</html>

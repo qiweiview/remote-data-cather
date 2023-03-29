@@ -9,17 +9,40 @@ custom-config:
   memory-store-days: 1 #(天) 大于天数后会刷新内存存储
   memory-flush-limit: 1024 #(mb) 大于限制大小后会情况内存存储
   mock-apps:
-    - application-id: "test"
+    - application-id: "doudian"
       global-response-type: "SUC_RESPONSE"
       mock-menus:
         - name: "token换取"
-          url: "/restcloud/api/v1/token/create"
+          url: "/token/create"
           mock-response:
             delay: 5
             suc-code: 200
-            suc-body: "{\"appTokenId\":\"{\\\"appToken\\\":\\\"VLqUFTxeAxP2wSYIaemUuAkJyTRGHFKC0oThTfzSNzYLDObXbYUJtANI+UGa6fhHTgw4Au5pxUdxi0KUn5DhoS+ptv+frh7M2M36aBkQfYhvjr37nL4f5bSQ+cdfnAmra2UN0npd01AkAuBDHkIwKTAsKeJR76RLcdlTsLda+fkfYti+f69KRIu17qxlFlKIZ5V50uhGwFPJw0xqfvfR3ZIOkohPePK1p5kwWYoEHmIgRa7w21PMVov9CIDInMBylEQ0gQTul+HEcwjsjyY+wkcuOQQ5cqJBwjQuUK3GUltMJyahANs0Vaz9Q/TdMHHn7aJun+1nSPqQghIveMs78VHwFF7Qmkpr\\\",\\\"expireAt\\\":1666983581703}\",\"userTokenId\":\"{\\\"userToken\\\":\\\"VLqUFTxeAxP2wSYIaemUuAkJyTRGHFKCxa/xH8P1K03CtWnF6Ylhw77M2N9cwWzprbSVN9L3BzgV3zDL8bbc8Ro6tA8h73Rtcl+wDXuY7Cbl8hcfoMLDIiTAji3oONHxfZAXJg3Fgmxu2Q/OgdVCgvDSrX5Gyd2q+xo26ujygJMyH1R6kUeRqjSDOy09LE/6urjNorU4vjNSl7MxwoFCAvsqeSCbYHr+szbfnQERvwwb/tOGW+pU8A==\\\",\\\"expireAt\\\":1666983581701}\",\"message\":\"userToken：令牌创建成功！；appToken：令牌创建成功!\"}"
+            suc-body: '{
+                         "data": {
+                           "access_token": "5a3bd7d0-1b48-46d6-811e-7e05ace08a2f",
+                           "auth_subject_type": "WuLiuShang",
+                           "authority_id": "3445403781179769176",
+                           "expires_in": "412219354",
+                           "refresh_token": "50b6ae40-ed8f-4b60-a4af-2ed743a4b903",
+                           "scope": "SCOPE",
+                           "shop_id": "1111117239",
+                           "shop_name": "李飞测试放心花人店一体"
+                         },
+                         "code": 10000,
+                         "msg": "success",
+                         "sub_code": "",
+                         "sub_msg": ""
+                       }'
             err-code: 500
-            err-body: "{\"name\":123}"
+            err-body: '{
+                           "code": 40003,
+                           "err_no": 30001,
+                           "log_id": "202303272220390CF8AF9B9B36F9316E70",
+                           "message": "认证失败，app_key格式不正确，应为19位纯数字",
+                           "msg": "缺少必选参数",
+                           "sub_code": "isv.app-id-invalid",
+                           "sub_msg": "认证失败，app_key格式不正确，应为19位纯数字"
+                       }'
           headers:
             - name: "Content-Type"
               value: "application/json"
